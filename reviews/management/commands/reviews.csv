@@ -1,0 +1,4 @@
+content:Review,,,,,
+review_content,review_rating,review_date_created,review_date_edited,review_creator,review_book
+A must read for all,5,31:40.4,31:40.4,peterjones@test.com,Advanced Deep Learning with Keras
+An ok read,3,31:40.4,31:40.4,marksandler@test.com,Advanced Deep Learning with Keras
