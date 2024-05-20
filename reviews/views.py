@@ -1,7 +1,7 @@
 from django.core.exceptions import PermissionDenied
 from .models import Book, Contributor, Publisher, Review
 from .utils import average_rating
-from .forms import PublisherForm, SearchForm, ReviewForm, BookMediaForm
+from .forms import PublisherForm, SearchForm, ReviewForm, BookMediaForm, ActivitySearchForm
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.utils import timezone
@@ -10,6 +10,11 @@ from django.core.files.images import ImageFile
 from io import BytesIO
 from django.contrib.auth.decorators import permission_required, login_required
 from django.contrib.auth.decorators import user_passes_test
+# import json to load json data to python dictionary
+import json
+# urllib.request to make a request to api
+import urllib.request
+import requests
 
 
 def is_staff_user(user):
@@ -17,7 +22,7 @@ def is_staff_user(user):
 
 
 def index(request):
-    return render(request, "base.html")
+    return render(request, 'base.html')
 
 
 def book_search(request):
@@ -169,3 +174,41 @@ def book_media(request, book_pk):
         form = BookMediaForm(instance=book)
     return render(request, "reviews/instance-form.html",
                   {"form": form, "instance": book, "model_type": "Book", "is_file_upload": True})
+
+import requests
+
+def api_example(request):
+    # is_cached = ('fact' in request.session)
+    # # Make an API call to the Cat Facts API
+    # if not is_cached:
+    #     url = "https://catfact.ninja/fact"
+    #     response = requests.get(url)
+    #     if response.status_code == 200:
+    #         request.session['fact'] = response.json()
+    #         fact = response.json().get("fact")
+    #     else:
+    #         fact = None
+    # else:
+    #     fact = request.session['fact']
+    url = "https://catfact.ninja/fact"
+    response = requests.get(url)
+    if response.status_code == 200:
+        fact = response.json().get("fact")
+    else:
+        fact = None
+    search_text = request.GET.get("type", "")
+    form = ActivitySearchForm(request.GET)
+    if form.is_valid() and form.cleaned_data["type"]:
+        url2 = "http://www.boredapi.com/api/activity?type="+search_text
+        response = requests.get(url2)
+        if response.status_code == 200:
+            activity = response.json().get("activity")
+            activity = activity.lower()
+        else:
+            activity = None
+    context = {"activity": activity, "form": form, "fact": fact}
+    return render(request, 'api_example.html', context)
+
+
+
+

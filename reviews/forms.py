@@ -27,3 +27,17 @@ class BookMediaForm(forms.ModelForm):
         exclude = ["title", "publication_date", "isbn", "publisher","contributors"]
     cover = forms.ImageField(required=False)
     sample = forms.FileField(required=False)
+
+ACT_CHOICES =(
+    ("recreational", "Recreational"),
+    ("education", "Education"),
+    ("social", "Social"),
+    ("relaxation", "Relaxation"),
+    ("cooking", "Cooking"),
+    ("diy", "DIY"),
+    ("music", "Music"),
+    ("busywork", "Busywork"),
+)
+
+class ActivitySearchForm(forms.Form):
+    type = forms.ChoiceField(required=True, choices=ACT_CHOICES)
